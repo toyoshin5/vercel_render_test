@@ -3,7 +3,7 @@ services:
     name: fastapi
     runtime: python
     plan: free
-    repo: https://github.com/toyoshin5/vercel_render_test # ご自身のGitHubリポジトリのURLに書き換えてください
+    repo: https://github.com/toyoshin5/vercel_render_test # 自身のGitHubリポジトリのURLに書き換える
     branch: main
     buildCommand: "pip install -r backend/requirements.txt"
     startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
