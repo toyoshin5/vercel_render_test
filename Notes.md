@@ -29,7 +29,7 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
         name: fastapi
         runtime: python
         plan: free # 無料プラン
-        repo: https://github.com/your-username/your-repo-name # 自身のGitHubリポジトリ
+        repo: https://github.com/toyoshin5/vercel_render_test # 実際のGitHubリポジトリ
         branch: main
         buildCommand: "pip install -r backend/requirements.txt"
         startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
