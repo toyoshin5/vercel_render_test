@@ -55,6 +55,8 @@ async def startup():
 async def shutdown():
     await database.disconnect()
 
+
+
 @app.get("/memos", response_model=list[Memo])
 async def read_memos():
     query = memos.select()
@@ -76,4 +78,4 @@ async def update_memo(memo_id: int, memo: MemoIn):
 async def delete_memo(memo_id: int):
     query = memos.delete().where(memos.c.id == memo_id)
     await database.execute(query)
-    return {"message": "Memo deleted successfully"}
+    return {"message": "Memo deleted successfully!"}
