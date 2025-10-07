@@ -6,8 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
 # Database configuration
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./test.db")
 database = databases.Database(DATABASE_URL)
