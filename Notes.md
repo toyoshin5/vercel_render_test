@@ -105,11 +105,29 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
 
 `main`ブランチへのプルリクエスト時に、フロントエンドとバックエンドのビルドが通るかを自動でチェックします。
 
-1.  **`.github/workflows`ディレクトリ作成:**
-    プロジェクトルートに作成します。
+**ブランチ保護ルールの設定（推奨）**
 
-2.  **`frontend-ci.yml` (フロントエンドCI):**
+CIチェックが完了するまでマージを禁止するには、GitHub上でブランチ保護ルールを設定します。これにより、品質が担保されたコードのみが`main`ブランチにマージされるようになります。
+
+1.  対象リポジトリの **Settings** > **Branches** に移動します。
+2.  **Branch protection rules**セクションで、**Add rule** をクリックします。
+3.  **Branch name pattern** に `main` と入力します。
+4.  **Require status checks to pass before merging** を有効にします。
+    *   **Require branches to be up to date before merging** も有効にすると、より厳格な運用ができます。
+5.  必須とするステータスチェックを検索し、以下を選択します。
+    *   `build`
+6.  **Create** をクリックしてルールを保存します。
+
+この設定後、CIが成功しないプルリクエストはマージできなくなります。
+
+**ワークフローファイル**
+
+CIの実体は、`.github/workflows`ディレクトリ内の以下のYAMLファイルです。
+
+*   **`frontend-ci.yml` (フロントエンドCI):**
     `frontend`ディレクトリの変更を検知し、`npm install`, `npm run lint`, `npm run build` を実行します。
+*   **`backend-ci.yml` (バックエンドCI):**
+    `backend`ディレクトリの変更を検知し、依存関係のインストールと`flake8`, `black`によるチェックを実行します。
 
     ```yaml
     name: Frontend CI
@@ -147,35 +165,6 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
             working-directory: ./frontend
     ```
 
-3.  **`backend-ci.yml` (バックエンドCI):**
-    `backend`ディレクトリの変更を検知し、`pip install`を実行します。
-
-    ```yaml
-    name: Backend CI
-
-    on:
-      pull_request:
-        branches:
-          - main
-        paths:
-          - 'backend/**'
-
-    jobs:
-      build:
-        runs-on: ubuntu-latest
-
-        steps:
-          - name: Checkout repository
-            uses: actions/checkout@v4
-
-          - name: Set up Python
-            uses: actions/setup-python@v5
-            with:
-              python-version: '3.11'
-
-          - name: Install dependencies
-            run: pip install -r backend/requirements.txt
-    ```
 
 ### b. コード品質チェック (pre-commit, Husky & lint-staged)
 
