@@ -72,6 +72,25 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
 
 新しい開発者がプロジェクトに参加した場合、以下の手順で環境をセットアップします。
 
+**推奨VS Code拡張機能**
+
+*   [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint): コードの静的解析とフォーマットのために必須です。
+
+**VS Codeのチーム共通設定**
+
+このリポジトリには、チーム全体の開発体験を統一するため、VS Codeの共通設定ファイル (`.vscode/settings.json`) が含まれています。
+
+リポジトリをクローンすると、この設定がVS Codeに自動的に読み込まれ、以下の機能が有効になります。
+
+*   **保存時の自動フォーマット**:
+    *   TypeScript/JavaScript (`.ts`, `.tsx`) ファイルを保存すると、ESLintのルールに従って自動でコードが整形されます。
+
+**開発者が行うこと:**
+
+*   推奨拡張機能である **[ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)** をインストールしてください。
+
+これだけで、特別な設定をせずともチーム共通のフォーマットルールが自動で適用されます。
+
 1.  **セットアップスクリプトの実行:**
     プロジェクトのルートで以下のコマンドを実行します。これにより、必要な依存関係のインストールとGitフックの有効化が自動で行われます。
 
