@@ -3,9 +3,13 @@ import sqlalchemy
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Database configuration
-DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./test.db")
 database = databases.Database(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
 
@@ -17,9 +21,12 @@ memos = sqlalchemy.Table(
     sqlalchemy.Column("text", sqlalchemy.String),
 )
 
-engine = sqlalchemy.create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+if DATABASE_URL.startswith("sqlite"):
+    engine = sqlalchemy.create_engine(
+        DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+else:
+    engine = sqlalchemy.create_engine(DATABASE_URL)
 metadata.create_all(engine)
 
 

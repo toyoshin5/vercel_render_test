@@ -33,6 +33,15 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
         branch: main
         buildCommand: "pip install -r backend/requirements.txt"
         startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+        envVars:
+          - key: DATABASE_URL
+            fromDatabase:
+              name: postgres
+              property: connectionString
+
+    databases:
+      - name: postgres
+        plan: free
     ```
 
 2.  **Renderダッシュボード設定:**
@@ -205,6 +214,9 @@ CIの実体は、`.github/workflows`ディレクトリ内の以下のYAMLファ�
             uses: actions/setup-python@v5
             with:
               python-version: '3.11'
+
+          - name: Install PostgreSQL client
+            run: sudo apt-get install -y libpq-dev
 
           - name: Install dependencies
             run: pip install -r backend/requirements.txt
