@@ -26,7 +26,7 @@ export default function Home() {
       const data = await res.json();
       setMemos(data);
     } catch (error) {
-      console.error("Failed to fetch memos:", error);
+      console.error("Failed to fetch memos", error);
     }
   };
 
