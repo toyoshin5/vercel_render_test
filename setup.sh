@@ -14,12 +14,7 @@ echo "Virtual environment activated"
 
 # 2. Install dependencies
 pip install -r backend/requirements.txt
-pip install -r backend/requirements-dev.txt
 echo "Backend dependencies installed"
-
-# 3. Activate pre-commit hooks
-pre-commit install
-echo "pre-commit hooks installed"
 
 
 # --- Node Frontend Setup ---
