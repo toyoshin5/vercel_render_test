@@ -26,7 +26,7 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
     ```yaml
     services:
       - type: web
-        name: fastapi
+        name: <サービス名>-backend # 任意のサービス名
         runtime: python
         plan: free # 無料プラン
         repo: https://github.com/toyoshin5/vercel_render_test # 実際のGitHubリポジトリ
@@ -58,7 +58,7 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
         *   **Value:** 手順2でコピーしたRenderのURL
     *   保存すると自動で再デプロイ。
 
-## 5. 自動デプロイの仕組み
+## 5. 自動デプロイ(CD)の仕組み
 
 `main`ブランチへのpushで、VercelとRenderがそれぞれ自動でビルド＆デプロイを実行。
 
@@ -67,3 +67,117 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
 -   **エラー:** `Failed to fetch`
 -   **原因:** Vercelの環境変数 `NEXT_PUBLIC_API_URL` が未設定、またはURLが誤っている可能性。
 -   **解決策:** 手順4に戻り、RenderのURLがVercelの環境変数に正しく設定されているか確認。
+
+## 7. CI/CD と開発環境の設定
+
+### a. CI (継続的インテグレーション) on GitHub Actions
+
+`main`ブランチへのプルリクエスト時に、フロントエンドとバックエンドのビルドが通るかを自動でチェックします。
+
+1.  **`.github/workflows`ディレクトリ作成:**
+    プロジェクトルートに作成します。
+
+2.  **`frontend-ci.yml` (フロントエンドCI):**
+    `frontend`ディレクトリの変更を検知し、`npm install`, `npm run lint`, `npm run build` を実行します。
+
+    ```yaml
+    name: Frontend CI
+
+    on:
+      pull_request:
+        branches:
+          - main
+        paths:
+          - 'frontend/**'
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Set up Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: '20'
+
+          - name: Install dependencies
+            run: npm install
+            working-directory: ./frontend
+
+          - name: Run linter
+            run: npm run lint
+            working-directory: ./frontend
+
+          - name: Build project
+            run: npm run build
+            working-directory: ./frontend
+    ```
+
+3.  **`backend-ci.yml` (バックエンドCI):**
+    `backend`ディレクトリの変更を検知し、`pip install`を実行します。
+
+    ```yaml
+    name: Backend CI
+
+    on:
+      pull_request:
+        branches:
+          - main
+        paths:
+          - 'backend/**'
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+              python-version: '3.11'
+
+          - name: Install dependencies
+            run: pip install -r backend/requirements.txt
+    ```
+
+### b. ローカル開発環境の自動整形 (Husky & lint-staged)
+
+Gitコミット時に、ステージングされたファイルに対して自動で`eslint`を実行し、コードスタイルを統一します。
+
+1.  **必要なパッケージのインストール:**
+    `frontend`ディレクトリで以下を実行。
+
+    ```bash
+    npm install --save-dev husky lint-staged
+    ```
+
+2.  **`package.json`の設定:**
+    `scripts`と`lint-staged`の設定を追加。
+
+    ```json
+    // frontend/package.json
+
+    "scripts": {
+      // ...
+      "prepare": "husky"
+    },
+    "lint-staged": {
+      "*.{ts,tsx}": [
+        "eslint --fix"
+      ]
+    }
+    ```
+
+3.  **Huskyの設定:**
+    `frontend`ディレクトリで以下を実行し、`pre-commit`フックを作成。
+
+    ```bash
+    npx husky init
+    echo "npx lint-staged" > .husky/pre-commit
+    ```
