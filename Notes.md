@@ -44,6 +44,8 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
         plan: free
     ```
 
+    ローカル開発ではSQLiteを使用し、Render環境ではPostgreSQLを使用する構成にする
+
 2.  **Renderダッシュボード設定:**
     *   「New Blueprint Instance」からGitHubリポジトリを連携。
     *   `render.yaml`が自動検出されデプロイ開始。
