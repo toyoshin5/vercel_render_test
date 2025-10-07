@@ -126,9 +126,6 @@ CIの実体は、`.github/workflows`ディレクトリ内の以下のYAMLファ�
 
 *   **`frontend-ci.yml` (フロントエンドCI):**
     `frontend`ディレクトリの変更を検知し、`npm install`, `npm run lint`, `npm run build` を実行します。
-*   **`backend-ci.yml` (バックエンドCI):**
-    `backend`ディレクトリの変更を検知し、依存関係のインストールと`flake8`, `black`によるチェックを実行します。
-
     ```yaml
     name: Frontend CI
 
@@ -163,6 +160,43 @@ CIの実体は、`.github/workflows`ディレクトリ内の以下のYAMLファ�
           - name: Build project
             run: npm run build
             working-directory: ./frontend
+    ```
+
+*   **`backend-ci.yml` (バックエンドCI):**
+    `backend`ディレクトリの変更を検知し、依存関係のインストールと`flake8`, `black`によるチェックを実行します。
+    ```yaml
+    name: Backend CI
+
+    on:
+      pull_request:
+        branches:
+          - main
+        paths:
+          - 'backend/**'
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+              python-version: '3.11'
+
+          - name: Install dependencies
+            run: |
+              pip install -r backend/requirements.txt
+              pip install -r backend/requirements-dev.txt
+
+          - name: Lint with flake8
+            run: flake8 backend
+
+          - name: Check formatting with black
+            run: black --check backend
     ```
 
 
