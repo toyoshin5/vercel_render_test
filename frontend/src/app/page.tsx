@@ -14,7 +14,7 @@ export default function Home() {
   const [newMemo, setNewMemo] = useState("");
 
   useEffect(() => {
-    fetchMemos();
+    fetchMem
   }, []);
 
   const fetchMemos = async () => {
