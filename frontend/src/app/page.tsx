@@ -72,7 +72,7 @@ export default function Home() {
             value={newMemo}
             onChange={(e) => setNewMemo(e.target.value)}
             className="flex-grow p-2 border rounded text-black"
-            placeholder="Enter a new memo"
+            placeholder="新しいメモを入力"
           />
           <button
             onClick={handleAddMemo}
