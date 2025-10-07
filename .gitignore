@@ -54,7 +54,6 @@ yarn-error.log*
 /backend/.hypothesis/
 /backend/.pytest_cache/
 /backend/cover/
-/backend/.env
 /backend/.venv
 /backend/env/
 /backend/venv/

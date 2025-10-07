@@ -2,6 +2,54 @@
 
 このリポジトリは、Next.js（フロントエンド）とFastAPI（バックエンド）で構成されたモノリポ構成のサンプルアプリケーションです。
 
+## サービス構成図
+
+```mermaid
+graph TD
+    subgraph "ユーザー"
+        A[<i class='fa fa-user'></i> User]
+    end
+
+    subgraph "フロントエンド (Vercel)"
+        B[Next.js App]
+    end
+
+    subgraph "バックエンド (Render)"
+        C[FastAPI App] --> D[(<i class='fa fa-database'></i> SQLite DB)];
+    end
+
+    A -- "HTTPS" --> B;
+    B -- "API Request" --> C;
+
+    style A fill:#D5F5E3
+    style B fill:#EBF5FB
+    style C fill:#E8DAEF
+    style D fill:#FEF9E7
+```
+
+## 開発ワークフロー図
+
+```mermaid
+graph TD
+    subgraph "ローカル環境"
+        Dev[<i class='fa fa-user'></i> Developer] -- "1. VS Codeで開発" --> Code;
+        Code -- "2. git commit" --> Husky{Husky pre-commit hook};
+        Husky -- "Lint OK" --> Push(3. git push);
+        Husky -- "Lint NG" --> Dev;
+    end
+
+    subgraph "GitHub"
+        Push --> PR(4. Pull Request作成);
+        PR --> CI{GitHub Actions CI};
+        CI -- "Build & Test OK" --> Merge(5. Merge to main);
+    end
+    
+    subgraph "本番環境"
+        Merge -->|6. Auto Deploy| Vercel[<i class='fa fa-cloud'></i> Vercel];
+        Merge -->|6. Auto Deploy| Render[<i class='fa fa-server'></i> Render];
+    end
+```
+
 ## 1. セットアップ手順
 
 ### ステップ1: 前提条件の確認とVS Code拡張機能のインストール
