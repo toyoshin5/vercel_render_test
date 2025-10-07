@@ -68,7 +68,38 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
 -   **原因:** Vercelの環境変数 `NEXT_PUBLIC_API_URL` が未設定、またはURLが誤っている可能性。
 -   **解決策:** 手順4に戻り、RenderのURLがVercelの環境変数に正しく設定されているか確認。
 
-## 7. CI/CD と開発環境の設定
+## 7. 開発環境のセットアップとローカル実行
+
+新しい開発者がプロジェクトに参加した場合、以下の手順で環境をセットアップします。
+
+1.  **セットアップスクリプトの実行:**
+    プロジェクトのルートで以下のコマンドを実行します。これにより、必要な依存関係のインストールとGitフックの有効化が自動で行われます。
+
+    ```bash
+    bash setup.sh
+    ```
+    *初回実行時や、`setup.sh`自体に変更があった場合は、`chmod +x setup.sh`で実行権限を付与する必要があるかもしれません。*
+
+2.  **バックエンドの実行:**
+    *   仮想環境を有効化します。
+        ```bash
+        source backend/.venv/bin/activate
+        ```
+    *   FastAPIサーバーを起動します。
+        ```bash
+        uvicorn backend.main:app --reload
+        ```
+    *   ブラウザで `http://127.0.0.1:8000/docs` にアクセスすると、APIドキュメントが確認できます。
+
+3.  **フロントエンドの実行:**
+    *   `frontend`ディレクトリで開発サーバーを起動します。
+        ```bash
+        cd frontend
+        npm run dev
+        ```
+    *   ブラウザで `http://localhost:3000` にアクセスすると、アプリケーションが表示されます。
+
+## 8. CI/CD とコード品質
 
 ### a. CI (継続的インテグレーション) on GitHub Actions
 
@@ -146,38 +177,16 @@ Next.js（フロントエンド）とFastAPI（バックエンド）のモノリ
             run: pip install -r backend/requirements.txt
     ```
 
-### b. ローカル開発環境の自動整形 (Husky & lint-staged)
+### b. コード品質チェック (pre-commit, Husky & lint-staged)
 
-Gitコミット時に、ステージングされたファイルに対して自動で`eslint`を実行し、コードスタイルを統一します。
+`setup.sh`を実行することで、Gitコミット時に自動でコード品質チェックが走る仕組み（Gitフック）が有効になります。
 
-1.  **必要なパッケージのインストール:**
-    `frontend`ディレクトリで以下を実行。
+*   **Python (`.py`ファイル):**
+    *   `pre-commit`フレームワークを利用します。
+    *   `black`による自動フォーマットと、`flake8`による文法チェックが実行されます。
+    *   設定はルートの`.pre-commit-config.yaml`に記述されています。
 
-    ```bash
-    npm install --save-dev husky lint-staged
-    ```
-
-2.  **`package.json`の設定:**
-    `scripts`と`lint-staged`の設定を追加。
-
-    ```json
-    // frontend/package.json
-
-    "scripts": {
-      // ...
-      "prepare": "husky"
-    },
-    "lint-staged": {
-      "*.{ts,tsx}": [
-        "eslint --fix"
-      ]
-    }
-    ```
-
-3.  **Huskyの設定:**
-    `frontend`ディレクトリで以下を実行し、`pre-commit`フックを作成。
-
-    ```bash
-    npx husky init
-    echo "npx lint-staged" > .husky/pre-commit
-    ```
+*   **Frontend (`.ts`, `.tsx`ファイル):**
+    *   `husky`と`lint-staged`を利用します。
+    *   `eslint --fix`が実行され、コードのチェックと自動修正が行われます。
+    *   設定は`frontend/package.json`に記述されています。
